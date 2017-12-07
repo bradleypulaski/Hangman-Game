@@ -1,0 +1,142 @@
+        #arizona-accent {
+            background: url('resources/arizona.gif');
+            height: 150px;
+            width: 100%;
+        }
+        @font-face {
+            font-family: lazer84;
+            src: url('resources/Lazer84.ttf');
+        }
+        @font-face {
+            font-family: digital7;
+            src: url('resources/digital7.ttf');
+        }
+        body {
+            background: url('resources/bg.gif');
+            background-size: 50%;
+        }
+
+        h1 {
+            font-family: lazer84;
+            color: white;
+            font-size: 100px;
+            text-shadow: 3px 3px cyan, -3px -3px #f466cc;
+            letter-spacing: 4px;
+        }
+
+        h2 {
+            width: 90%;
+            height: 50px;
+            line-height: 50px;
+            font-size: 24pt;
+            background-color: black;
+            font-family: digital7;
+            color: red;
+            text-shadow: 1px 1px cyan, -1px -1px white;
+            letter-spacing: 4px;
+        }
+
+
+        #left-column {
+            width: 39%;
+            height: 100%;
+            float: left;
+            margin-top: 25px;
+            border-right: 2px  dashed #006400;
+        }
+        #right-column {
+            margin-top: 25px;
+            float: left;
+            width: 60%;
+        }
+        #play-area {
+            width: 80%;
+
+            background: url('resources/playarea.jpg');
+            background-size: 100% 100%;
+            filter: brightness(1.5);
+            height: 600px;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            margin-left: auto;
+            margin-right: auto;
+
+        }
+        #game {
+            text-align: left;
+            margin-left: auto;
+            margin-right: auto;
+            width: 90%;
+        }
+
+        #word {
+            margin-left: auto;
+            margin-width: auto;
+            width: auto;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        #side-img {
+            width: 90%;
+            filter: brightness(.7);
+        }
+
+        .letter {
+            display: inline-block;
+            border-bottom: 1px solid black;
+            width: 10px;
+            margin: 5px;
+            height: 21px;
+        }
+        .chosenLetter {
+            display: inline-block;
+            width: 10px;
+            margin: 5px;
+        }
+        #incorrect-overlay {
+            background: url('resources/incorrect.gif');
+            background-size: 100% 100%;;
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        #correct-overlay {
+            background: url('resources/correct.gif');
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+
+        #win-overlay {
+            background: url('resources/win.jpg');
+            background-size: 100% 100%;;
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }
+        #lose-overlay {
+            background: url('resources/lose.jpg');
+            background-size: 100% 100%;;
+            position: fixed;
+            z-index: 999;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+        }

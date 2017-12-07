@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Hangman</title>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.min.js"
+            integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous"></script>
+        <link rel="stylesheet" type="text/css" href="style.css">
+    </head>
+    <body>
+    <center style="position:static">
+        <div id="incorrect-overlay"></div>
+        <div id="correct-overlay"></div>
+        <div id="win-overlay"></div>
+        <div id="lose-overlay"></div>
+        <div id="arizona-accent"><h1>HANGMAN</h1></div>
+        <div id="play-area">
+            <div id="left-column">
+                <div>
+                    <img id="side-img" src="resources/side.jpg" />
+                    <h2 id="time"><span id="hour"></span><span id="colon">:</span><span id="minute"></span></h2>
+                </div>
+            </div>
+            <div id="right-column">
+                <div id="game">
+                    <div id="word"></div>
+                    Ｃｈｏｓｅｎ　Ｌｅｔｔｅｒｓ： <div style="display:inline-block" id="chosenLetters"></div><br/>
+                    Ｒｅｍａｉｎｉｎｇ　Ｇｕｅｓｓｅｓ： <div style="display:inline-block" id="remainingGuesses">10</div><br/>
+                    Ｗｉｎｓ： <div style="display:inline-block" id="wins">0</div><br/>
+                    Ｌｏｓｓｅｓ： <div style="display:inline-block" id="losses">0</div>
+                </div>
+            </div>
+        </div>
+    </center>
+    <script>
+
+        var wins = 0;
+        var losses = 0;
+        var file = "resources/words.json";
+        var words = [];
+        var chosenLetters = [];
+        var remainingLetters = [];
+        var remainingGuesses = 10;
+        function lrng(arr) {
+            return Math.floor(Math.random() * arr.length);
+        }
+        function incorrect() {
+            var audio = new Audio('resources/incorrect.mp3');
+            audio.play();
+            $("#incorrect-overlay").css("opacity", "0.6");
+            setTimeout(function () {
+                $("#incorrect-overlay").css("opacity", "0");
+            }, 1400);
+        }
+        function correct() {
+            var audio = new Audio('resources/correct.mp3');
+            audio.play();
+            $("#correct-overlay").css("opacity", "0.6");
+            setTimeout(function () {
+                $("#correct-overlay").css("opacity", "0");
+            }, 1400);
+        }
+        function logger() {
+            console.log("Remaining Guesses");
+            console.log(remainingGuesses);
+            console.log("Remaining Letters");
+            console.log(remainingLetters);
+            console.log("Chosen Letters");
+            console.log(chosenLetters);
+        }
+        function resetGame() {
+            chosenLetters = [];
+            remainingLetters = [];
+            remainingGuesses = 10;
+            $("#word").html("");
+//                TODO FRONT END CHANGES
+            updateUI();
+            runGame();
+        }
+        function loseGame() {
+            losses++;
+            $("#lose-overlay").css("opacity", "1");
+            var audio = new Audio('resources/lose.wav');
+            audio.play();
+            setTimeout(function () {
+                $("#lose-overlay").css("opacity", "0");
+            }, 1500);
+            resetGame();
+        }
+        function winGame() {
+            wins++;
+            $("#win-overlay").css("opacity", "1");
+            var audio = new Audio('resources/win.mp3');
+            audio.play();
+            setTimeout(function () {
+                $("#win-overlay").css("opacity", "0");
+            }, 1500);
+            resetGame();
+        }
+        function updateUI() {
+            var chosen = "";
+            for (key in chosenLetters) {
+                chosen += "<span class='chosenLetter'>" + chosenLetters[key] + "</span>"
+            }
+            $("#chosenLetters").html(chosen);
+            $("#remainingGuesses").html(remainingGuesses);
+            $("#wins").html(wins);
+            $("#losses").html(losses);
+        }
+        function userInput(input) {
+
+            if (chosenLetters.indexOf(input) === -1) {
+                chosenLetters.push(input);
+            }
+            var index = remainingLetters.indexOf(input)
+            if (index === -1) {
+                remainingGuesses--;
+                incorrect();
+            } else {
+                correct();
+                remainingLetters.splice(index, 1);
+                $(".letter[data-value='" + input + "']").html(input);
+            }
+            if (remainingGuesses === 0) {
+                loseGame();
+            }
+            if (remainingLetters.length === 0) {
+                winGame();
+            }
+            updateUI();
+            logger();
+        }
+        function runGame() {
+            var rng = lrng(words)
+            var word = words[rng];
+            var length = word.length;
+            var i = 0;
+            while (i < length) {
+                var letter = word.substring(i, i + 1);
+                if (remainingLetters.indexOf(letter) === -1) {
+                    remainingLetters.push(letter);
+                }
+                $("#word").append("<span class='letter' data-value='" + letter + "'></span>")
+                i++;
+            }
+            document.onkeyup = function (event) {
+                var input = event.key;
+                var letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+                if (letters.indexOf(input) !== -1) {
+                    userInput(input);
+                }
+            }
+        }
+        $.getJSON(file, {
+            format: "json"
+        }).done(function (data) {
+            words = data
+            runGame();
+        });
+
+        function pad(num, size) {
+            var s = num + "";
+            while (s.length < size)
+                s = "0" + s;
+            return s;
+        }
+        $(function () {
+            var date = new Date;
+            var minutes = pad(date.getMinutes(), 2);
+            var hour = pad(date.getHours(), 2);
+
+            $("#hour").html(hour);
+            $("#minute").html(minutes);
+            setInterval(function () {
+                var state = $("#colon").css("opacity");
+                if (state == '1') {
+                    state = 0;
+                } else {
+                    state = 1;
+                }
+                $("#colon").css("opacity", state);
+
+                var date = new Date;
+                var minutes = pad(date.getMinutes(), 2);
+                var hour = pad(date.getHours(), 2);
+
+                $("#hour").html(hour);
+                $("#minute").html(minutes);
+
+            }, 1000);
+
+            var bgmusic = new Audio('resources/bg.mp3');
+            bgmusic.volume = .3;
+            bgmusic.addEventListener('ended', function () {
+                this.currentTime = 0;
+                this.volume = .3;
+                this.play();
+            }, false);
+            bgmusic.play();
+        });
+    </script>
+ 
+</body>
+</html>
